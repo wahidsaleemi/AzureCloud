@@ -1,0 +1,23 @@
+{
+  "if": {
+    "allOf": [
+      {
+        "field": "tags",
+        "exists": "true"
+      },
+      {
+        "field": "tags.owner",
+        "exists": "false"
+      }
+    ]
+  },
+  "then": {
+    "effect": "append",
+    "details": [
+      {
+        "field": "tags.owner",
+        "value": "Please type in a name; should be a person."
+      }
+    ]
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "lockedResource": {
+      "type": "string"
+    },
+    "lockName": {
+      "type": "string",
+      "defaultValue": "lock-readonly-vnet"
+    },
+    "lockNotes": {
+      "type": "string",
+      "defaultValue": "virtual networks may not be modified per Contoso policy."
+    }
+  },
+  "resources": [
+    {
+      
+      "type": "Microsoft.Network/virtualNetworks/providers/locks",
+      "name": "[concat(parameters('lockedResource'), '/Microsoft.Authorization/', parameters('lockName'))]",
+      "apiVersion": "2015-01-01",
+      "properties": {
+        "level": "ReadOnly",
+        "notes": "[concat(parameters('lockNotes'))]"
+      }
+    }
+  ]
+}

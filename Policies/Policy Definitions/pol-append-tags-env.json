@@ -1,0 +1,23 @@
+{
+  "if": {
+    "allOf": [
+      {
+        "field": "tags",
+        "exists": "true"
+      },
+      {
+        "field": "tags.environment",
+        "exists": "false"
+      }
+    ]
+  },
+  "then": {
+    "effect": "append",
+    "details": [
+      {
+        "field": "tags.environment",
+        "value": "Please type in the environment. Examples: dev/test/prod."
+      }
+    ]
+  }
+}

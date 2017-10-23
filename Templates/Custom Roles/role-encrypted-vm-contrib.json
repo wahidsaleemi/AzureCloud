@@ -1,0 +1,11 @@
+{
+   "Name": "Encrypted VM Contributor",
+   "Description": "Can write to virtual machines that have encryption enabled.",
+   "Actions": [
+      "Microsoft.KeyVault/vaults/deploy/action"
+   ],
+   "NotActions": [
+   ],
+   "AssignableScopes": [
+   ]
+}
