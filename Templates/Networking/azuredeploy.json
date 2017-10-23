@@ -1,0 +1,299 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "tagvalues": {
+    "type": "object",
+    "defaultValue": {
+        "Owner": "Fill in",
+        "environment": "Fill in",
+        "Engagement": "None",
+        "LOB": "Fill in",
+        "Application": "Azure CIS"
+        }
+    },
+    "ipRange": {
+      "type": "string",
+      "defaultValue": "10.20.30.0",
+      "metadata": {
+        "description": "IP Address Range without CIDR mask, x.y.z.0 is the expected format"
+      }
+    },
+    "vNetMask": {
+      "type": "string",
+      "defaultValue": "/23",
+      "metadata": {
+        "description": "vNet CIDR mask, /xy is the expected format"
+      }
+    },
+    "PerimMask": {
+      "type": "string",
+      "defaultValue": "/28",
+      "metadata": {
+        "description": "Perimeter Subnet CIDR mask"
+      }
+    },
+    "GatewayMask": {
+      "type": "string",
+      "defaultValue": "/28",
+      "metadata": {
+        "description": "Gateway Subnet CIDR mask"
+      }
+    },
+    "TransportMask": {
+      "type": "string",
+      "defaultValue": "/28",
+      "metadata": {
+        "description": "Transport Subnet CIDR mask"
+      }
+    },
+    "RemoteAccessMask": {
+      "type": "string",
+      "defaultValue": "/28",
+      "metadata": {
+        "description": "RemoteAccess Subnet CIDR mask"
+      }
+    },
+    "ContosoMask": {
+      "type": "string",
+      "defaultValue": "/27",
+      "metadata": {
+        "description": "Contoso Subnet CIDR mask"
+      }
+    },
+    "UtilityMask": {
+      "type": "string",
+      "defaultValue": "/27",
+      "metadata": {
+        "description": "Utility Subnet CIDR mask"
+      }
+    },
+    "App1Mask": {
+      "type": "string",
+      "defaultValue": "/26",
+      "metadata": {
+        "description": "App1 Subnet CIDR mask"
+      }
+    },
+    "Data1Mask": {
+      "type": "string",
+      "defaultValue": "/26",
+      "metadata": {
+        "description": "Data1 Subnet CIDR mask"
+      }
+    },
+    "PerimStartIP": {
+      "type": "string",
+      "defaultValue": "48",
+      "metadata": {
+        "description": "Perimeter Subnet StartIP"
+      }
+    },
+    "GatewayStartIP": {
+      "type": "string",
+      "defaultValue": "0",
+      "metadata": {
+        "description": "Gateway Subnet StartIP"
+      }
+    },
+    "TransportStartIP": {
+      "type": "string",
+      "defaultValue": "16",
+      "metadata": {
+        "description": "Transport Subnet StartIP"
+      }
+    },
+    "RemoteAccessStartIP": {
+      "type": "string",
+      "defaultValue": "32",
+      "metadata": {
+        "description": "RemoteAccess Subnet StartIP"
+      }
+    },
+    "ContosoStartIP": {
+      "type": "string",
+      "defaultValue": "64",
+      "metadata": {
+        "description": "Contoso Subnet StartIP"
+      }
+    },
+    "UtilityStartIP": {
+      "type": "string",
+      "defaultValue": "96",
+      "metadata": {
+        "description": "Utility Subnet StartIP"
+      }
+    },
+    "App1StartIP": {
+      "type": "string",
+      "defaultValue": "128",
+      "metadata": {
+        "description": "App1 Subnet StartIP"
+      }
+    },
+    "Data1StartIP": {
+      "type": "string",
+      "defaultValue": "192",
+      "metadata": {
+        "description": "Data1 Subnet StartIP"
+      }
+    }
+  },
+  "variables": {
+    "BaseIP": "[split(parameters('ipRange'),'.')]",
+    "count": "[sub(length(variables('BaseIP')),1)]",
+    "Oct1": "[variables('oIPrange')[0]]",
+    "Oct2": "[variables('oIPrange')[1]]",
+    "Oct3": "[variables('oIPrange')[2]]",
+    "Oct3up": "[add(Int(variables('oIPrange')[2]),1)]",
+    "oIPrange": "[take(variables('BaseIP'), variables('count'))]",
+    "vNetAddress": "[concat(parameters('ipRange'), parameters('vNetMask'))]",
+    "virtualNetworkName": "vnet-cis",
+    "vnetID":"[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
+    "gatewaySubnetRef":"[concat(variables('vnetID'),'/subnets/','GatewaySubnet')]"
+  },
+  "resources": [
+      {
+          "name": "[variables('virtualNetworkName')]",
+          "type": "Microsoft.Network/virtualNetworks",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2016-03-30",
+          "dependsOn": [ ],
+          "tags": {
+              "Owner": "[parameters('tagvalues').Owner]",
+              "environment": "[parameters('tagvalues').environment]",
+              "Engagement": "[parameters('tagvalues').Engagement]",
+              "LOB": "[parameters('tagvalues').LOB]",
+              "Application": "[parameters('tagvalues').Application]"
+              },
+          "properties": {
+              "addressSpace": {
+                  "addressPrefixes": [
+                      "[variables('vNetAddress')]"
+                  ]
+              },
+            "subnets": [
+              {
+                "name": "sub-perimeter",
+                "properties": {
+                  "addressPrefix": "[concat(variables('Oct1'),'.',variables('Oct2'),'.',variables('Oct3'),'.',parameters('PerimStartIP'), parameters('PerimMask'))]"
+                }
+              },
+              {
+                "name": "GatewaySubnet",
+                "properties": {
+                  "addressPrefix": "[concat(variables('Oct1'),'.',variables('Oct2'),'.',variables('Oct3'),'.',parameters('GatewayStartIP'), parameters('GatewayMask'))]"
+                }
+              },
+              {
+                "name": "sub-transport",
+                "properties": {
+                  "addressPrefix": "[concat(variables('Oct1'),'.',variables('Oct2'),'.',variables('Oct3'),'.',parameters('TransportStartIP'), parameters('TransportMask'))]"
+                }
+              },
+              {
+                "name": "sub-remoteAccess",
+                "properties": {
+                  "addressPrefix": "[concat(variables('Oct1'),'.',variables('Oct2'),'.',variables('Oct3'),'.',parameters('RemoteAccessStartIP'), parameters('RemoteAccessMask'))]"
+                }
+              },
+              {
+                "name": "sub-Contoso",
+                "properties": {
+                  "addressPrefix": "[concat(variables('Oct1'),'.',variables('Oct2'),'.',variables('Oct3'),'.',parameters('ContosoStartIP'), parameters('ContosoMask'))]"
+                }
+              },
+              {
+                "name": "sub-utility",
+                "properties": {
+                  "addressPrefix": "[concat(variables('Oct1'),'.',variables('Oct2'),'.',variables('Oct3'),'.',parameters('UtilityStartIP'), parameters('UtilityMask'))]"
+                }
+              },
+              {
+                "name": "sub-app1",
+                "properties": {
+                  "addressPrefix": "[concat(variables('Oct1'),'.',variables('Oct2'),'.',variables('Oct3'),'.',parameters('App1StartIP'), parameters('App1Mask'))]"
+                }
+              },
+              {
+                "name": "sub-data1",
+                "properties": {
+                  "addressPrefix": "[concat(variables('Oct1'),'.',variables('Oct2'),'.',variables('Oct3'),'.',parameters('Data1StartIP'), parameters('Data1Mask'))]"
+                }
+              }
+            ]
+          }
+      },
+    {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "Gateway-IP",
+      "tags": {
+          "Owner": "[parameters('tagvalues').Owner]",
+          "environment": "[parameters('tagvalues').environment]",
+          "Engagement": "[parameters('tagvalues').Engagement]",
+          "LOB": "[parameters('tagvalues').LOB]",
+          "Application": "[parameters('tagvalues').Application]"
+          },
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "publicIPAllocationMethod": "Dynamic"
+      }
+    },
+    {
+      "apiVersion": "2016-09-01",
+      "type": "Microsoft.Network/virtualNetworkGateways",
+      "name": "gw-contoso-p2s",
+      "tags": {
+          "Owner": "[parameters('tagvalues').Owner]",
+          "environment": "[parameters('tagvalues').environment]",
+          "Engagement": "[parameters('tagvalues').Engagement]",
+          "LOB": "[parameters('tagvalues').LOB]",
+          "Application": "[parameters('tagvalues').Application]"
+          },
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "Microsoft.Network/publicIPAddresses/Gateway-IP",
+        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('gatewaySubnetRef')]"
+              },
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses','Gateway-IP')]"
+              }
+            },
+            "name": "vnetGatewayConfig"
+          }
+        ],
+        "sku": {
+          "name": "Basic",
+          "tier": "Basic"
+        },
+        "gatewayType": "Vpn",
+        "vpnType": "RouteBased",
+        "enableBgp": "false",
+        "vpnClientConfiguration": {
+          "vpnClientAddressPool": {
+            "addressPrefixes": [
+              "172.17.17.0/24"
+            ]
+          },
+          "vpnClientRootCertificates": [
+            {
+              "name": "ContosoRoot",
+              "properties": {
+                "PublicCertData": "xxxxxxxxxxxxxxxxxxxxxxxxxfv0+qLt4muF1QGBHhiVzpdYDHojPWzxk9hHvw2fy/sZx"           }
+            }
+          ]
+        }
+      }
+    }
+    ]
+ }
+

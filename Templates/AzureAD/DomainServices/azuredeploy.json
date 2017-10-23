@@ -1,0 +1,52 @@
+{
+"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+"contentVersion": "1.0.0.0",
+"parameters": {
+    "domainName": {
+        "type": "string",
+        "defaultValue": "onewahidlive.onmicrosoft.com"
+    },
+    "existingVnetResourceGroupName": {
+        "type": "string",
+        "defaultValue": "rg-stak"
+    },
+    "vnetName": {
+        "type": "string",
+        "defaultValue": "vnet-eastus2"
+    },
+    "subnetName": {
+        "type": "string",
+        "defaultValue": "ActiveDirectory"
+    }
+},
+"variables": {
+    "vnetID": "[concat(resourceId(parameters('existingVnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/', parameters('vnetName')))]",
+    "SubnetId": "[concat(resourceId(parameters('existingVnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/', parameters('vnetName')), '/subnets/',parameters('subnetName'))]"
+},
+"resources": [
+    {
+        "type": "Microsoft.AAD/domainServices",
+        "name": "[parameters('domainName')]",
+        "apiVersion": "2017-06-01",
+        "location": "[resourceGroup().location]",
+        "tags": {
+            "Owner": "Wahid Saleemi"
+        },
+        "properties": {
+            "domainName": "[parameters('domainName')]",
+            "subnetId": "[variables('subnetId')]"
+        },
+        "dependsOn": []
+    }
+],
+"outputs": {
+    "addsID": {
+        "value": "[resourceId('Microsoft.AAD/DomainServices', parameters('domainName'))]",
+        "type": "string"
+    },
+    "dnsServers": {
+        "value": "[resourceId('Microsoft.AAD/DomainServices', parameters('domainName')).domainControllerIpAddress]",
+        "type": "array"
+    }
+}
+}
