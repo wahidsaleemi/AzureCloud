@@ -286,3 +286,6 @@ __pycache__/
 *.btm.cs
 *.odx.cs
 *.xsd.cs
+
+#Manual ignore list of files
+Policies/Deploy-PolicySet-NoSync.ps1

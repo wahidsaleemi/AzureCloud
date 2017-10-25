@@ -2,7 +2,7 @@
 
 Login-AzureRmAccount -TenantId ""
 $subscriptionId = ""
-$folder = "C:\Users\wasaleem\Documents\GitHub\AzureCloud\Templates\PolicySet-Storage"
+$folder = ".\Templates\PolicySet-Storage"
 Set-Location $folder
 
 #region PolicyDefinitions
@@ -11,6 +11,7 @@ $params1 = @{
 Name = "audit-managedDisks"
 DisplayName = "Storage: Audit VMs that do not use managed disks"
 Description = "This policy audits VMs that do not use managed disks."
+Metadata = "Storage Security"
 Policy = "pol-storage-audit-NoManagedDisks.json"
 }
 
@@ -19,6 +20,7 @@ $params2 = @{
 Name = "deny-NoBlobEncryption"
 DisplayName = "Storage: Ensure Blob Encryption is on for Storage Accounts."
 Description = "Deny creation of Storage Accounts if Blob Encryption is not on."
+Metadata = "Storage Security"
 Policy = "pol-storage-deny-NoBlobEncryption.json"
 }
 
@@ -27,6 +29,7 @@ $params3 = @{
 Name = "deny-NoFileEncryption"
 DisplayName = "Storage: Ensure File Encryption is on for Storage Accounts."
 Description = "Deny creation of Storage Accounts if File Encryption is not on."
+Metadata = "Storage Security"
 Policy = "pol-storage-deny-NoFileEncyption.json"
 }
 
@@ -35,6 +38,7 @@ $params4 = @{
 Name = "deny-NoHttpsOnly"
 DisplayName = "Storage: Ensure https traffic only for storage account"
 Description = "Deny creation of Storage Accounts if httpsOnly flag is not set."
+Metadata = "Storage Security"
 Policy = "pol-storage-deny-NoHttpsOnly.json"
 }
 

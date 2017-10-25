@@ -1,0 +1,8 @@
+{
+    "location": {
+        "type": "string",
+        "metadata": {
+            "displayName": "Audit if Network Watcher is not enabled for region"
+        }
+    }
+}

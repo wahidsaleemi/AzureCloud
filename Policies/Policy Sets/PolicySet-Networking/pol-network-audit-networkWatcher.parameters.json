@@ -1,0 +1,10 @@
+{
+    "location": {
+        "type": "string",
+        "metadata": {
+            "displayName": "Azure Region to check",
+            "description": "This policy audits if Network Watcher is not enabled for a selected region.",
+            "strongType": "location"
+        }
+    }
+}
